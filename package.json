@@ -102,5 +102,13 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "prettier": "^2.8.8"
   },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!devtools-detect)"
+    ]
+  },
   "homepage": "."
 }

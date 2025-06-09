@@ -1,9 +1,8 @@
-import React, { ChangeEvent, MouseEvent, useRef } from 'react';
-import User from '../../../models/User';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { selectUserData } from '../../../redux/selectors/useSelectors';
-import { logout } from '../../../redux/actions/login/loginSlice';
-import NavMenu from './nav-menu';
+import React, { ChangeEvent, MouseEvent, useRef } from 'react'
+import User from '../../../models/User'
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks'
+import { logout, selectUserData } from '../../../redux/actions/login/loginSlice'
+import NavMenu from './nav-menu'
 import {
   hideBalExp,
   HideBalExp,
@@ -11,94 +10,92 @@ import {
   selectHideBalExp,
   setExposer,
   setSingleBal,
-} from '../../../redux/actions/balance/balanceSlice';
-import { CustomLink, useNavigateCustom } from './custom-link';
-import { isMobile } from 'react-device-detect';
-import Marqueemessge from '../../../admin-app/pages/_layout/elements/welcome';
-import NavMobileMenu from './nav-mobile-menu';
-import axios, { AxiosResponse } from 'axios';
-import { CONSTANTS } from '../../../utils/constants';
-import userService from '../../../services/user.service';
-import ReactModal from 'react-modal';
-import { useWebsocketUser } from '../../../context/webSocketUser';
-import Rules from '../../Rules/rules';
-import { selectRules } from '../../../redux/actions/common/commonSlice';
-import AutocompleteComponent from '../../../components/AutocompleteComponent';
-import matchService from '../../../services/match.service';
-import IMatch from '../../../models/IMatch';
-import casinoSlugs from '../../../utils/casino-slugs.json';
+} from '../../../redux/actions/balance/balanceSlice'
+import { CustomLink, useNavigateCustom } from './custom-link'
+import { isMobile } from 'react-device-detect'
+import Marqueemessge from '../../../admin-app/pages/_layout/elements/welcome'
+import NavMobileMenu from './nav-mobile-menu'
+import axios, { AxiosResponse } from 'axios'
+import { CONSTANTS } from '../../../utils/constants'
+import userService from '../../../services/user.service'
+import ReactModal from 'react-modal'
+import { useWebsocketUser } from '../../../context/webSocketUser'
+import Rules from '../../Rules/rules'
+import { selectRules } from '../../../redux/actions/common/commonSlice'
+import AutocompleteComponent from '../../../components/AutocompleteComponent'
+import matchService from '../../../services/match.service'
+import IMatch from '../../../models/IMatch'
+import casinoSlugs from '../../../utils/casino-slugs.json'
 
 const Header = () => {
-  const ref = useRef<any>(null);
-  const userState = useAppSelector<{ user: User }>(selectUserData);
-  const balance = useAppSelector(selectBalance);
-  const selectHideBal = useAppSelector<HideBalExp>(selectHideBalExp);
-  const rules = useAppSelector(selectRules);
-  const dispatch = useAppDispatch();
+  const ref = useRef<any>(null)
+  const userState = useAppSelector<{ user: User }>(selectUserData)
+  const balance = useAppSelector(selectBalance)
+  const selectHideBal = useAppSelector<HideBalExp>(selectHideBalExp)
+  const rules = useAppSelector(selectRules)
+  const dispatch = useAppDispatch()
 
-  const navigate = useNavigateCustom();
+  const navigate = useNavigateCustom()
 
-  const { socketUser } = useWebsocketUser();
+  const { socketUser } = useWebsocketUser()
 
-  const [showMenu, setShowMenu] = React.useState<boolean>(false);
-  const [showAuto, setShowAuto] = React.useState<boolean>(false);
+  const [showMenu, setShowMenu] = React.useState<boolean>(false)
+  const [showAuto, setShowAuto] = React.useState<boolean>(false)
 
-  const [userMessage, setUserMessage] = React.useState<string>('');
+  const [userMessage, setUserMessage] = React.useState<string>('')
 
-  const [hideExpBal, setHideExpBal] = React.useState<HideBalExp>(
-    {} as HideBalExp
-  );
+  const [hideExpBal, setHideExpBal] = React.useState<HideBalExp>({} as HideBalExp)
 
-  const [isOpen, setIsOpen] = React.useState<any>(false);
-  const [isOpenRule, setIsOpenRule] = React.useState<any>(false);
-  const [getExposerEvent, setGetExposerEvent] = React.useState<any>([]);
+  const [isOpen, setIsOpen] = React.useState<any>(false)
+  const [isOpenRule, setIsOpenRule] = React.useState<any>(false)
+  const [getExposerEvent, setGetExposerEvent] = React.useState<any>([])
 
   React.useEffect(() => {
     axios.get(`userMessage.json?v=${Date.now()}`).then((res: AxiosResponse) => {
-      setUserMessage(res.data.message);
-    });
-  }, []);
+      setUserMessage(res.data.message)
+    })
+  }, [])
 
   React.useEffect(() => {
-    setIsOpenRule(rules.open);
-  }, [rules]);
+    setIsOpenRule(rules.open)
+  }, [rules])
 
   React.useEffect(() => {
     const handlerExposer = ({ exposer, balance }: any) => {
-      if (balance !== undefined) dispatch(setSingleBal(balance));
-      if (exposer !== undefined) dispatch(setExposer(exposer));
-    };
-    socketUser.on('updateExposer', handlerExposer);
+      if (balance !== undefined) dispatch(setSingleBal(balance))
+      if (exposer !== undefined) dispatch(setExposer(exposer))
+    }
+    socketUser.on('updateExposer', handlerExposer)
 
     return () => {
-      socketUser.removeListener('updateExposer', handlerExposer);
-    };
-  }, [balance]);
+      socketUser.removeListener('updateExposer', handlerExposer)
+    }
+  }, [balance])
 
   React.useEffect(() => {
-    setHideExpBal(selectHideBal);
-  }, [selectHideBal]);
+    setHideExpBal(selectHideBal)
+  }, [selectHideBal])
 
   const logoutUser = (e: any) => {
-    e.preventDefault();
-    dispatch(logout());
-    navigate.go('/login');
-  };
+    e.preventDefault()
+    dispatch(logout())
+    navigate.go('/login')
+  }
 
   const onChangeBalExp = (e: ChangeEvent<HTMLInputElement>) => {
-    const expBal = { ...hideExpBal, [e.target.name]: e.target.checked };
-    dispatch(hideBalExp(expBal));
-    localStorage.setItem(CONSTANTS.HIDE_BAL_EXP, JSON.stringify(expBal));
-    setHideExpBal(expBal);
-  };
+    const expBal = { ...hideExpBal, [e.target.name]: e.target.checked }
+    dispatch(hideBalExp(expBal))
+    localStorage.setItem(CONSTANTS.HIDE_BAL_EXP, JSON.stringify(expBal))
+    setHideExpBal(expBal)
+  }
 
   const getExposer = (e: MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setIsOpen(true);
+    e.preventDefault()
+    setIsOpen(true)
     userService.getExposerEvent().then((res: AxiosResponse) => {
-      setGetExposerEvent(res.data.data);
-    });
-  };
+      setGetExposerEvent(res.data.data)
+    })
+  }
 
   React.useEffect(() => {
     /**
@@ -106,59 +103,59 @@ const Header = () => {
      */
     const handleClickOutside = (event: any) => {
       if (showMenu && ref.current && !ref.current.contains(event.target)) {
-        closeMenu();
+        closeMenu()
       }
-    };
+    }
     // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
       // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ref, showMenu]);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [ref, showMenu])
 
   const closeMenu = () => {
-    setShowMenu(false);
-  };
+    setShowMenu(false)
+  }
   const suggestion = ({ value }: any) => {
-    return matchService.getMatchListSuggestion({ name: value });
-  };
+    return matchService.getMatchListSuggestion({ name: value })
+  }
 
   const onMatchClick = (match: IMatch | null) => {
     if (match) {
-      window.location.href = `/odds/${match.matchId}`;
+      window.location.href = `/odds/${match.matchId}`
     }
-  };
+  }
 
   return (
-    <header className="header">
-      <div className="container-fluid">
-        <div className="row">
-          <div className="header-top col-md-12">
-            <div className="flex05">
+    <header className='header'>
+      <div className='container-fluid'>
+        <div className='row'>
+          <div className='header-top col-md-12'>
+            <div className='flex05'>
               {isMobile ? (
-                <CustomLink to="/match/4/in-play">
-                  <i className="fas fa-home" />
+                <CustomLink to='/match/4/in-play'>
+                  <i className='fas fa-home' />
                 </CustomLink>
               ) : (
                 ''
               )}
               <CustomLink
-                to="/match/4/in-play"
-                className="logo router-link-exact-active router-link-active"
+                to='/match/4/in-play'
+                className='logo router-link-exact-active router-link-active'
               >
-                <img src="/imgs/logo.png" className="logo-icon" />
+                <img src='/imgs/logo.png' className='logo-icon' />
               </CustomLink>
             </div>
 
-            <ul className="flex05 justify-content-end d-flex profile-right-side">
+            <ul className='flex05 justify-content-end d-flex profile-right-side'>
               {/* <div className='row-deposit-button mr-20'>
                 <CustomLink className='btn btn-deposit mr-10' to={'/deposit'}>Deposit</CustomLink>
                 <CustomLink className='btn btn-withdraw' to={'/withdraw'}>Withdraw</CustomLink>
               </div> */}
               {!isMobile ? (
                 <>
-                  <li className="search float-left row">
+                  <li className='search float-left row'>
                     {/* <input
                       name='game_keyword'
                       placeholder='All Events'
@@ -176,25 +173,25 @@ const Header = () => {
                     />
 
                     <a
-                      href="#"
+                      href='#'
                       onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                        e.preventDefault();
-                        setShowAuto(!showAuto);
+                        e.preventDefault()
+                        setShowAuto(!showAuto)
                       }}
                       className={`search-input`}
                     >
-                      <i className="fas fa-search-plus" />
+                      <i className='fas fa-search-plus' />
                     </a>
                   </li>
-                  <li className="float-left download-apklink">
+                  <li className='float-left download-apklink'>
                     <div>
                       <a
-                        href="#"
+                        href='#'
                         onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-                          e.preventDefault();
-                          setIsOpenRule(true);
+                          e.preventDefault()
+                          setIsOpenRule(true)
                         }}
-                        className="rules-link m-r-5"
+                        className='rules-link m-r-5'
                       >
                         <b>Rules</b>
                       </a>
@@ -204,46 +201,38 @@ const Header = () => {
               ) : (
                 ''
               )}
-              <li className="ballance float-left">
+              <li className='ballance float-left'>
                 {!isMobile && !selectHideBal.balance ? (
-                  <div className="mby-5">
+                  <div className='mby-5'>
                     {!isMobile ? (
                       <span>Balance: </span>
                     ) : (
                       <span>
                         <i
-                          className={
-                            isMobile
-                              ? 'tx-14 fa fa-university'
-                              : 'fa fa-university'
-                          }
-                          aria-hidden="true"
+                          className={isMobile ? 'tx-14 fa fa-university' : 'fa fa-university'}
+                          aria-hidden='true'
                         ></i>
                       </span>
                     )}
                     <b>
-                      <span className={isMobile ? 'tx-14' : ''}>
-                        {balance.balance?.toFixed(2)}
-                      </span>
+                      <span className={isMobile ? 'tx-14' : ''}>{balance.balance?.toFixed(2)}</span>
                     </b>
                   </div>
                 ) : (
                   ''
                 )}
                 {!selectHideBal.exposer ? (
-                  <div className="mty-5">
-                    <a href="#" onClick={getExposer}>
+                  <div className='mty-5'>
+                    <a href='#' onClick={getExposer}>
                       {!isMobile ? (
-                        <span className="">Exp : </span>
+                        <span className=''>Exp : </span>
                       ) : (
-                        <span className="tx-14 mrc-2">Exp : </span>
+                        <span className='tx-14 mrc-2'>Exp : </span>
                       )}
 
                       <b>
                         <span className={isMobile ? 'tx-14 ' : ''}>
-                          {balance.exposer > 0
-                            ? balance.exposer?.toFixed(2)
-                            : 0}
+                          {balance.exposer > 0 ? balance.exposer?.toFixed(2) : 0}
                         </span>
                       </b>
                     </a>
@@ -252,16 +241,13 @@ const Header = () => {
                   ''
                 )}
               </li>
-              <li className="account float-left">
+              <li className='account float-left'>
                 {isMobile && !selectHideBal.balance ? (
                   <div>
                     <span>
-                      <i
-                        className="tx-13 mrc-2 fa fa-university"
-                        aria-hidden="true"
-                      ></i>
+                      <i className='tx-13 mrc-2 fa fa-university' aria-hidden='true'></i>
                     </span>
-                    <span className="tx-13">{balance.balance?.toFixed(2)}</span>
+                    <span className='tx-13'>{balance.balance?.toFixed(2)}</span>
                   </div>
                 ) : (
                   ''
@@ -271,156 +257,100 @@ const Header = () => {
                   onClick={() => setShowMenu(!showMenu)}
                 >
                   {userState?.user?.username}
-                  <i className="fas fa-chevron-down" />
+                  <i className='fas fa-chevron-down' />
                 </span>
                 {/*add class d-block -*/}
-                <ul
-                  ref={ref}
-                  style={{ display: showMenu ? 'block' : 'none' }}
-                  className=""
-                >
+                <ul ref={ref} style={{ display: showMenu ? 'block' : 'none' }} className=''>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/match/in-play"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/match/in-play' className=''>
                       Home
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/accountstatement"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/accountstatement' className=''>
                       Account Statement
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/depositstatement"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/depositstatement' className=''>
                       Deposit Statement
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/withdrawstatement"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/withdrawstatement' className=''>
                       Withdraw Statement
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/profitloss"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/profitloss' className=''>
                       Profit Loss Report
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/bethistory"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/bethistory' className=''>
                       Bet History
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/unsettledbet"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/unsettledbet' className=''>
                       Unsettled Bet
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/casino/result"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/casino/result' className=''>
                       Casino Report History
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/button-values"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/button-values' className=''>
                       Set Button Values
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/settings/security-auth"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/settings/security-auth' className=''>
                       Security Auth Verification
                     </CustomLink>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/changepassword"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/changepassword' className=''>
                       Change Password
                     </CustomLink>
                   </li>
                   <li>
-                    <label className="mb-0">
+                    <label className='mb-0'>
                       <input
                         type={'checkbox'}
                         name={'balance'}
                         checked={hideExpBal.balance || false}
                         onChange={onChangeBalExp}
-                        className="mrc-5"
+                        className='mrc-5'
                       />{' '}
                       Balance
                     </label>
                   </li>
                   <li>
-                    <label className="mb-0">
+                    <label className='mb-0'>
                       <input
                         type={'checkbox'}
                         name={'exposer'}
                         checked={hideExpBal.exposer || false}
                         onChange={onChangeBalExp}
-                        className="mrc-5"
+                        className='mrc-5'
                       />{' '}
                       Exposer
                     </label>
                   </li>
                   <li>
-                    <CustomLink
-                      onClick={() => closeMenu()}
-                      to="/rules"
-                      className=""
-                    >
+                    <CustomLink onClick={() => closeMenu()} to='/rules' className=''>
                       Rules
                     </CustomLink>
                   </li>
 
-                  <li className="border-top">
+                  <li className='border-top'>
                     <a
                       onClick={logoutUser}
                       href={'#'}
-                      style={{
-                        fontWeight: 'bold',
-                        color: 'red',
-                        textTransform: 'uppercase',
-                      }}
+                      style={{ fontWeight: 'bold', color: 'red', textTransform: 'uppercase' }}
                     >
                       signout
                     </a>
@@ -429,45 +359,42 @@ const Header = () => {
               </li>
             </ul>
           </div>
-          {isMobile ? <Marqueemessge message={userMessage} /> : ''}
+          {isMobile ? <Marqueemessge message={userMessage} /> : ""}
           {!isMobile ? <NavMenu /> : <NavMobileMenu />}
         </div>
       </div>
       <div />
-      <div className="modal-market" />
-
+      <div className='modal-market' />
+     
       <ReactModal
         isOpen={isOpen}
         onRequestClose={(e: any) => {
-          setIsOpen(false);
+          setIsOpen(false)
         }}
-        contentLabel="Set Max Bet Limit"
+        contentLabel='Set Max Bet Limit'
         className={'modal-dialog'}
         ariaHideApp={false}
       >
-        <div className="modal-content">
-          <div className="modal-header">
+        <div className='modal-content'>
+          <div className='modal-header'>
             My Market
-            <button
-              onClick={() => setIsOpen(false)}
-              className="close float-right"
-            >
-              <i className="fas fa-times-circle"></i>
+            <button onClick={() => setIsOpen(false)} className='close float-right'>
+              <i className='fas fa-times-circle'></i>
             </button>
           </div>
-          <div className="modal-body">
-            <table className="reponsive table col-12">
+          <div className='modal-body'>
+            <table className='reponsive table col-12'>
               <tr>
                 <th>Event Name</th>
                 <th>Total Bets</th>
               </tr>
 
               {getExposerEvent.map((exposer: any) => {
-                let casinoSlug = '';
+                let casinoSlug = ''
                 if (exposer.sportId == 5000) {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
-                  casinoSlug = casinoSlugs?.[exposer?.matchId];
+                  casinoSlug = casinoSlugs?.[exposer?.matchId]
                 }
                 return (
                   <tr key={exposer.matchName}>
@@ -476,16 +403,16 @@ const Header = () => {
                         onClick={() => {
                           window.location.href =
                             exposer.sportId &&
-                            Number.isInteger(+exposer.sportId) &&
-                            exposer.sportId != 5000
+                              Number.isInteger(+exposer.sportId) &&
+                              exposer.sportId != 5000
                               ? `/odds/${exposer._id}`
-                              : `/casino/${casinoSlug}/${exposer._id}`;
-                          setIsOpen(false);
+                              : `/casino/${casinoSlug}/${exposer._id}`
+                          setIsOpen(false)
                         }}
                         to={
                           exposer.sportId &&
-                          Number.isInteger(+exposer.sportId) &&
-                          exposer.sportId != 5000
+                            Number.isInteger(+exposer.sportId) &&
+                            exposer.sportId != 5000
                             ? `/odds/${exposer._id}`
                             : `/casino/${casinoSlug}/${exposer._id}`
                         }
@@ -495,41 +422,36 @@ const Header = () => {
                     </td>
                     <td>{exposer.myCount}</td>
                   </tr>
-                );
+                )
               })}
             </table>
           </div>
         </div>
       </ReactModal>
+      
 
       <ReactModal
         isOpen={isOpenRule}
         onRequestClose={(e: any) => {
-          setIsOpenRule(false);
+          setIsOpenRule(false)
         }}
-        contentLabel="Set Max Bet Limit"
+        contentLabel='Set Max Bet Limit'
         className={'modal-dialog w-90P'}
         ariaHideApp={false}
       >
-        <div
-          className="modal-content"
-          style={{ height: '90vh', marginTop: '1%' }}
-        >
-          <div className="modal-header">
+        <div className='modal-content' style={{ height: '90vh', marginTop: "1%" }}>
+          <div className='modal-header'>
             Rules
-            <button
-              onClick={() => setIsOpenRule(false)}
-              className="close float-right"
-            >
-              <i className="fas fa-times-circle"></i>
+            <button onClick={() => setIsOpenRule(false)} className='close float-right'>
+              <i className='fas fa-times-circle'></i>
             </button>
           </div>
-          <div className="modal-body">
+          <div className='modal-body'>
             <Rules classData={'col-md-12'} />
           </div>
         </div>
       </ReactModal>
     </header>
-  );
-};
-export default Header;
+  )
+}
+export default Header

@@ -1,46 +1,44 @@
-import React from 'react';
-import IMarket from '../../models/IMarket';
-import LFancy from '../../models/LFancy';
-import sportsService from '../../services/sports.service';
-import { useParams } from 'react-router-dom';
-import IMatch from '../../models/IMatch';
-import { IUserBetStake } from '../../models/IUserStake';
-import { useDispatch } from 'react-redux';
-import { betPopup, selectFancyType } from '../../redux/actions/bet/betSlice';
-import IBet from '../../models/IBet';
-import { setCurrentMatch } from '../../redux/actions/sports/sportSlice';
-import Score from './components/score';
-import { useWebsocketUser } from '../../context/webSocketUser';
-import { useAppSelector } from '../../redux/hooks';
-import { isMobile } from 'react-device-detect';
-import MatchDetail from './components/match-detail';
-import MatchDetailMobile from './components/match-detail-mobile';
-import axios from 'axios';
-import { RoleType } from '../../models/User';
-import authService from '../../services/auth.service';
-import { selectInitApp } from '../../redux/actions/common/commonSlice';
-import { selectUserData } from '../../redux/selectors/useSelectors';
+import React from 'react'
+import IMarket from '../../models/IMarket'
+import LFancy from '../../models/LFancy'
+import sportsService from '../../services/sports.service'
+import { useParams } from 'react-router-dom'
+import IMatch from '../../models/IMatch'
+import { IUserBetStake } from '../../models/IUserStake'
+import { useDispatch } from 'react-redux'
+import { betPopup, selectFancyType } from '../../redux/actions/bet/betSlice'
+import IBet from '../../models/IBet'
+import { setCurrentMatch } from '../../redux/actions/sports/sportSlice'
+import Score from './components/score'
+import { useWebsocketUser } from '../../context/webSocketUser'
+import { useAppSelector } from '../../redux/hooks'
+import { selectUserData } from '../../redux/actions/login/loginSlice'
+import { isMobile } from 'react-device-detect'
+import MatchDetail from './components/match-detail'
+import MatchDetailMobile from './components/match-detail-mobile'
+import axios from 'axios'
+import { RoleType } from '../../models/User'
+import authService from '../../services/auth.service'
+import { selectInitApp } from '../../redux/actions/common/commonSlice'
 
 type MarketData = {
-  markets: IMarket[];
-  fancies: LFancy[];
-  currentMatch: IMatch;
-  stake: IUserBetStake;
-};
+  markets: IMarket[]
+  fancies: LFancy[]
+  currentMatch: IMatch
+  stake: IUserBetStake
+}
 
 const Odds = () => {
-  const [marketDataList, setMarketDataList] = React.useState<MarketData>(
-    {} as MarketData
-  );
-  const [t10Channel, setT10Chanel] = React.useState<any>();
-  const [isTvShow, setIsTvShow] = React.useState<boolean>(false);
-  const userState = useAppSelector(selectUserData);
-  const { matchId } = useParams();
-  const dispatch = useDispatch();
-  const selectFancyT = useAppSelector(selectFancyType);
-  const initApp = useAppSelector(selectInitApp);
+  const [marketDataList, setMarketDataList] = React.useState<MarketData>({} as MarketData)
+  const [t10Channel, setT10Chanel] = React.useState<any>()
+  const [isTvShow, setIsTvShow] = React.useState<boolean>(false)
+  const userState = useAppSelector(selectUserData)
+  const { matchId } = useParams()
+  const dispatch = useDispatch()
+  const selectFancyT = useAppSelector(selectFancyType)
+  const initApp = useAppSelector(selectInitApp)
 
-  const { socketUser } = useWebsocketUser();
+  const { socketUser } = useWebsocketUser()
 
   const fetchOddsDetail = async () => {
     try {
@@ -52,26 +50,26 @@ const Odds = () => {
         ])
         .then(
           axios.spread((currentMatch, marketData, fancyData) => {
-            dispatch(setCurrentMatch(currentMatch.data.data.match));
+            dispatch(setCurrentMatch(currentMatch.data.data.match))
             setMarketDataList({
               currentMatch: currentMatch.data.data.match,
               fancies: fancyData.data.data,
               markets: marketData.data.data.markets,
               stake: currentMatch.data.data.stake,
-            });
-          })
-        );
+            })
+          }),
+        )
     } catch (error) {
-      console.log(error);
-      fetchOddsDetail();
+      console.log(error)
+      fetchOddsDetail()
     }
-  };
+  }
 
   React.useEffect(() => {
     return () => {
-      dispatch(betPopup({ isOpen: false, betData: {} as IBet }));
-    };
-  }, []);
+      dispatch(betPopup({ isOpen: false, betData: {} as IBet }))
+    }
+  }, [])
 
   React.useEffect(() => {
     if (initApp.event) {
@@ -80,101 +78,87 @@ const Odds = () => {
         .then((fancyData) => {
           //setMarketDataList({ ...marketDataList, fancies: fancyData.data.data })
         })
-        .catch((e) => console.log(e.message));
+        .catch((e) => console.log(e.message))
     }
-  }, [initApp]);
+  }, [initApp])
 
   React.useEffect(() => {
-    fetchOddsDetail();
-  }, [matchId]);
+    fetchOddsDetail()
+  }, [matchId])
 
   const fetchT10Stream = async () => {
     if (currentMatch?.isT10) {
-      const resp = await authService.gett10Streams();
+      const resp = await authService.gett10Streams()
       if (resp?.data) {
         const dataFilter = resp?.data?.filter(
-          (Item: any) => parseInt(Item.gameId) == currentMatch?.matchId
-        );
-        setT10Chanel(dataFilter?.[0]?.channel);
+          (Item: any) => parseInt(Item.gameId) == currentMatch?.matchId,
+        )
+        setT10Chanel(dataFilter?.[0]?.channel)
       }
     }
-  };
+  }
 
   React.useEffect(() => {
-    (async () => {
+    ; (async () => {
       if (selectFancyT && Object.keys(marketDataList).length > 0) {
-        const fancyData = await sportsService.getFancyList(
-          matchId!,
-          selectFancyT
-        );
-        setMarketDataList({ ...marketDataList, fancies: fancyData.data.data });
+        const fancyData = await sportsService.getFancyList(matchId!, selectFancyT)
+        setMarketDataList({ ...marketDataList, fancies: fancyData.data.data })
       }
-    })();
-  }, [selectFancyT]);
+    })()
+  }, [selectFancyT])
 
   React.useEffect(() => {
     if (userState.user._id) {
-      socketUser.emit(
-        'joinRoomMatchIdWUserId',
-        `${userState.user._id}-${matchId}`
-      );
+      socketUser.emit('joinRoomMatchIdWUserId', `${userState.user._id}-${matchId}`)
       socketUser.on('connect', () => {
-        socketUser.emit(
-          'joinRoomMatchIdWUserId',
-          `${userState.user._id}-${matchId}`
-        );
-      });
+        socketUser.emit('joinRoomMatchIdWUserId', `${userState.user._id}-${matchId}`)
+      })
     }
-  }, [userState.user]);
+  }, [userState.user])
 
   React.useEffect(() => {
-    fetchT10Stream();
-  }, [marketDataList]);
+    fetchT10Stream()
+  }, [marketDataList])
 
   const scoreBoard = () => {
     if (currentMatch && currentMatch.sportId == '4333')
-      return (
-        <Score
-          matchId={currentMatch?.matchId}
-          isT10={currentMatch?.isT10 || false}
-        />
-      );
+      return <Score matchId={currentMatch?.matchId} isT10={currentMatch?.isT10 || false} />
     else if (currentMatch)
       return (
         <iframe
           style={{ width: '100%', height: 'auto' }}
           src={`https://score.hr08bets.in/api?eventid=${currentMatch?.matchId}`}
         ></iframe>
-      );
-  };
+      )
+  }
 
   const t10Tv = (height: string) => {
     if (currentMatch && currentMatch.isT10)
       return (
-        <div className="t10-iframe">
+        <div className='t10-iframe'>
           <iframe
             style={{ height: `${height}px` }}
             src={`https://alpha-n.qnsports.live/route/rih.php?id=${t10Channel}`}
           ></iframe>
         </div>
-      );
-    else <div></div>;
-  };
+      )
+    else <div></div>
+  }
 
   const otherTv = () => {
     const tvUrl =
       currentMatch && currentMatch.sportId == '4'
         ? 'https://hr08bets.in/sports-stream-live/index.html?eventid='
-        : 'https://hr08bets.in/sports-stream-live/index.html?eventid=';
+        : 'https://hr08bets.in/sports-stream-live/index.html?eventid='
     return (
       !currentMatch?.isT10 && (
-        <div className="card m-b-10" style={{ border: '0px none' }}>
+        <div className='card m-b-10' style={{ border: '0px none' }}>
           {!isMobile ? (
-            <div className="card-header">
-              <h6 onClick={() => setIsTvShow(!isTvShow)} className="card-title">
+            <div className='card-header'>
+              <h6 onClick={() => setIsTvShow(!isTvShow)} className='card-title'>
                 Live Match
-                <span className="float-right">
-                  <i className="fa fa-tv" /> live stream started
+                <span className='float-right'>
+                  <i className='fa fa-tv' /> live stream started
                 </span>
               </h6>
             </div>
@@ -182,7 +166,7 @@ const Odds = () => {
             ''
           )}
           {!isMobile && isTvShow && (
-            <div className="card-body p0">
+            <div className='card-body p0'>
               <iframe
                 style={{ width: '100%', height: '250px' }}
                 src={`${tvUrl}${currentMatch?.matchId}`}
@@ -190,7 +174,7 @@ const Odds = () => {
             </div>
           )}
           {isMobile && (
-            <div className="card-body p0">
+            <div className='card-body p0'>
               <iframe
                 style={{ width: '100%', height: '250px' }}
                 src={`${tvUrl}${currentMatch?.matchId}`}
@@ -199,9 +183,9 @@ const Odds = () => {
           )}
         </div>
       )
-    );
-  };
-  const { currentMatch, markets, fancies } = marketDataList;
+    )
+  }
+  const { currentMatch, markets, fancies } = marketDataList
 
   return !isMobile || (isMobile && userState?.user?.role != RoleType.user) ? (
     <MatchDetail
@@ -225,6 +209,6 @@ const Odds = () => {
       markets={markets}
       otherTv={otherTv}
     />
-  );
-};
-export default React.memo(Odds);
+  )
+}
+export default React.memo(Odds)

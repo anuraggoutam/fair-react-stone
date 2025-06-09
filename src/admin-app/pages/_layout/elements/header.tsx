@@ -7,7 +7,7 @@ import 'react-modern-drawer/dist/index.css'
 import ISport from '../../../../models/ISport'
 import User, { RoleType } from '../../../../models/User'
 import { CustomLink, useNavigateCustom } from '../../../../pages/_layout/elements/custom-link'
-import { logout, userUpdate } from '../../../../redux/actions/login/loginSlice'
+import { logout, selectUserData, userUpdate } from '../../../../redux/actions/login/loginSlice'
 import { selectSportList } from '../../../../redux/actions/sports/sportSlice'
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks'
 import casinoService from '../../../../services/casino.service'
@@ -16,7 +16,6 @@ import userService from '../../../../services/user.service'
 import CustomAutoComplete from '../../../components/CustomAutoComplete'
 import Marqueemessge from './welcome'
 import { DataNode } from 'antd/es/tree'
-import { selectUserData } from '../../../../redux/selectors/useSelectors'
 
 const Header = () => {
   const userState = useAppSelector<{ user: User }>(selectUserData)

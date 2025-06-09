@@ -15,8 +15,7 @@ import BetListComponent from './bet-list.component'
 import { useWebsocketUser } from '../../../context/webSocketUser'
 import { useParams } from 'react-router-dom'
 import User, { RoleType } from '../../../models/User'
-import { selectUserData } from '../../../redux/selectors/useSelectors'
-
+import { selectUserData } from '../../../redux/actions/login/loginSlice'
 
 const UnsetteleBetHistoryAdmin = ({ hideHeader, matchId }: any) => {
   const [bethistory, setbethistory] = React.useState<any>({})

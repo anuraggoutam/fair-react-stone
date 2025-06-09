@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import '../node_modules/devtools-detect/index.js';
 import LogoutInactive from './components/LogoutInactive';
@@ -6,10 +6,10 @@ import ScrollToTop from './components/ScrollToTop';
 import { useWebsocketUser } from './context/webSocketUser';
 import User from './models/User';
 import { selectLoader, setInitApp } from './redux/actions/common/commonSlice';
-
+import { getUserInfoAction } from './redux/actions/login/login.action';
 import {
-  getUserInfoAction,
   logout,
+  selectUserData,
   userUpdate,
 } from './redux/actions/login/loginSlice';
 import { getSportListAction } from './redux/actions/sports/sport.action';
@@ -17,10 +17,8 @@ import { useAppDispatch, useAppSelector } from './redux/hooks';
 import Routers from './routes';
 import WindowFocusHandler from './utils/check-browser-active';
 import 'react-toastify/dist/ReactToastify.css';
-import { selectUserData } from './redux/selectors/useSelectors';
 import { useDispatch } from 'react-redux';
 import { setApiDispatch } from './utils/api';
-
 const App = () => {
   const ref = React.useRef<any>(null);
   const dispatch = useAppDispatch();

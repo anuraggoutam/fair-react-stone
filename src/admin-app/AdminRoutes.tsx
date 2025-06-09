@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAppSelector } from '../redux/hooks'
 import User, { RoleType } from '../models/User'
-import { selectUserData } from '../redux/selectors/useSelectors'
+import { selectUserData } from '../redux/actions/login/loginSlice'
 const ActiveMarkets = React.lazy(() => import('../admin-app/pages/active-matches/active-markets'))
 const ActiveMatches = React.lazy(() => import('../admin-app/pages/active-matches/active-matches'))
 const GetAllFancy = React.lazy(() => import('../admin-app/pages/active-matches/get-all-fancy'))
