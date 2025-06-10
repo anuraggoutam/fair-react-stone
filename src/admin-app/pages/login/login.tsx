@@ -23,9 +23,9 @@ const Login = () => {
   })
 
   React.useEffect(() => {
-    api.get(`${process.env.REACT_APP_IP_API_URL}`).then((res) => {
-      setLoginForm({ ...loginForm, logs: res.data })
-    })
+    api.get(`${import.meta.env.VITE_APP_IP_API_URL}`).then((res) => {
+      setLoginForm({ ...loginForm, logs: res.data });
+    });
   }, [])
 
   React.useEffect(() => {

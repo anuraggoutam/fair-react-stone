@@ -95,56 +95,69 @@ const Message = () => {
                 <div className='row'>
                   {Object.keys(getCategorize()).map((key) => {
                     return (
-                      <div key={key} className='col-md-12'>
-                        <h4 className='text-capitalize p-2'>{key}</h4>
-                        <div key={key} className='row'>
+                      <div key={key} className="col-md-12">
+                        <h4 className="text-capitalize p-2">{key}</h4>
+                        <div key={key} className="row">
                           {getCategorize()[key].map((setting: any) => (
-                            <div key={setting.name} className='col-lg-6'>
-                              <div className='form-group'>
+                            <div key={setting.name} className="col-lg-6">
+                              <div className="form-group">
                                 <label>
                                   {setting.label} *{' '}
                                   {'active' in setting &&
-                                    setting.name == 'userMaintenanceMessage' ? (
+                                  setting.name == 'userMaintenanceMessage' ? (
                                     <input
                                       type={'checkbox'}
                                       checked={setting.active}
-                                      onChange={(e) => onChangeActive(e, setting.index)}
+                                      onChange={(e) =>
+                                        onChangeActive(e, setting.index)
+                                      }
                                     />
                                   ) : (
                                     ''
                                   )}
-                                  {setting.value && setting.inputType === 'file' && (
-                                    <a
-                                      href={process.env.REACT_APP_SITE_URL + setting.value}
-                                      target='__blank'
-                                    >
-                                      <img
-                                        src={process.env.REACT_APP_SITE_URL + setting.value}
-                                        width={20}
-                                      />
-                                    </a>
-                                  )}
+                                  {setting.value &&
+                                    setting.inputType === 'file' && (
+                                      <a
+                                        href={
+                                          import.meta.env.VITE_APP_SITE_URL +
+                                          setting.value
+                                        }
+                                        target="__blank"
+                                      >
+                                        <img
+                                          src={
+                                            import.meta.env.VITE_APP_SITE_URL +
+                                            setting.value
+                                          }
+                                          width={20}
+                                        />
+                                      </a>
+                                    )}
                                 </label>
-                                <div className='form-label-group'>
+                                <div className="form-label-group">
                                   {!setting.inputType ? (
                                     <input
                                       type={'text'}
                                       name={setting.name}
-                                      id='user_name'
-                                      className='form-control'
+                                      id="user_name"
+                                      className="form-control"
                                       placeholder={setting?.label}
                                       value={setting.value}
-                                      onChange={(e) => onChange(e, setting.index)}
+                                      onChange={(e) =>
+                                        onChange(e, setting.index)
+                                      }
                                     />
                                   ) : (
                                     <>
                                       <input
                                         type={setting.inputType}
                                         name={setting.name}
-                                        id='user_name'
-                                        className='form-control'
+                                        id="user_name"
+                                        className="form-control"
                                         placeholder={setting?.label}
-                                        onChange={(e) => onChange(e, setting.index)}
+                                        onChange={(e) =>
+                                          onChange(e, setting.index)
+                                        }
                                       />
                                     </>
                                   )}
@@ -155,7 +168,7 @@ const Message = () => {
                           ))}
                         </div>
                       </div>
-                    )
+                    );
                   })}
                   <div className='col-lg-12'>
                     <div className='tr'>

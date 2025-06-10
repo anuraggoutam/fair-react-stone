@@ -18,7 +18,7 @@ export const setApiDispatch = (d: typeof dispatch) => {
 };
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASEURL,
+  baseURL: import.meta.env.VITE_APP_API_BASEURL,
   timeout: 50000,
   headers: {
     'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ api.interceptors.response.use(
 );
 
 export const sportsApi = axios.create({
-  baseURL: process.env.REACT_APP_API_SPORTS_URL,
+  baseURL: import.meta.env.VITE_APP_API_SPORTS_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export const sportsApi = axios.create({
 });
 
 export const fancyApi = axios.create({
-  baseURL: process.env.REACT_APP_PYTHON_SERVER,
+  baseURL: import.meta.env.VITE_APP_PYTHON_SERVER,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
